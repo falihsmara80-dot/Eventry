@@ -1,4 +1,4 @@
-# BundleAI
+# Eventry
 
 AI-powered e-commerce platform for event bundles. Monorepo containing a
 Node/Express backend (Prisma + PostgreSQL, Redis, OpenAI, Stripe) and a
@@ -7,7 +7,7 @@ React/Vite frontend (Tailwind CSS, Lucide icons).
 ## Project structure
 
 ```
-bundle-ai/
+Eventry/
 ├── backend/   # Express API, Prisma schema, business logic
 └── frontend/  # React + Vite + Tailwind UI
 ```
