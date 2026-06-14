@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import FinalDetailsModal from './FinalDetailsModal'
+import { API_BASE_URL } from '../lib/api'
 import {
   Sparkles,
   Users,
@@ -176,7 +177,7 @@ function BundlePreview({ bundle, loading, error }) {
     setCheckoutError(null)
 
     try {
-      const res = await fetch('/api/checkout/create-session', {
+      const res = await fetch(`${API_BASE_URL}/api/checkout/create-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -6,6 +6,7 @@ import EventForm from './components/EventForm'
 import BundlePreview from './components/BundlePreview'
 import Success from './components/Success'
 import Cancel from './components/Cancel'
+import { API_BASE_URL } from './lib/api'
 
 function PlanPage() {
   const [bundle, setBundle] = useState(null)
@@ -18,7 +19,7 @@ function PlanPage() {
     setBundle(null)
 
     try {
-      const res = await fetch('/api/bundle/generate', {
+      const res = await fetch(`${API_BASE_URL}/api/bundle/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ eventType, guests, budget }),
