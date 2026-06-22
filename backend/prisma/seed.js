@@ -308,6 +308,229 @@ async function main() {
     }
   });
 
+  // ==========================================
+  // 5. CAKES & DESSERTS
+  // ==========================================
+  await prisma.supplier.create({
+    data: {
+      name: "Sweet Boutique TLV",
+      location: "Dizengoff, Tel Aviv",
+      contact: "orders@sweetboutique.co.il",
+      rating: 4.8,
+      description: "Custom corporate branding cakes and premium dessert towers.",
+      products: {
+        create: [
+          {
+            name: "Custom Logo Tiered Corporate Cake",
+            price: 2500.00,
+            category: "DESSERT",
+            maxCapacity: 200,
+            supportedEvents: ["corporate"],
+            tags: ["cake", "branded", "sweet"],
+            description: "A multi-tier artisanal cake decorated with your company's branding and colors."
+          },
+          {
+            name: "Macaron & Petit Four Tower",
+            price: 1800.00,
+            category: "DESSERT",
+            maxCapacity: 100,
+            supportedEvents: ["corporate"],
+            tags: ["elegant", "bite-sized", "dessert"],
+            description: "An elegant, towering display of premium French macarons and miniature pastries."
+          }
+        ]
+      }
+    }
+  });
+
+  await prisma.supplier.create({
+    data: {
+      name: "Jaffa Artisan Bakery",
+      location: "Jaffa",
+      contact: "events@jaffabakery.co.il",
+      rating: 4.7,
+      description: "Authentic Middle Eastern sweets and vegan pastry options.",
+      products: {
+        create: [
+          {
+            name: "Middle Eastern Sweet Platter",
+            price: 120.00,
+            category: "DESSERT",
+            maxCapacity: 500,
+            supportedEvents: ["corporate"],
+            tags: ["baklava", "authentic", "vegan-friendly"],
+            description: "Massive trays of premium baklava, knafeh, and assorted vegan-friendly sweets."
+          }
+        ]
+      }
+    }
+  });
+
+  // ==========================================
+  // 6. EXTRA FOOD OPTIONS
+  // ==========================================
+  await prisma.supplier.create({
+    data: {
+      name: "Samurai Sushi Catering",
+      location: "Ramat Hachayal",
+      contact: "catering@samuraisushi.co.il",
+      rating: 4.9,
+      description: "Live sushi rolling stations and premium fish displays.",
+      products: {
+        create: [
+          {
+            name: "Live Sushi Boat Station",
+            price: 220.00,
+            category: "CATERING",
+            maxCapacity: 300,
+            supportedEvents: ["corporate"],
+            tags: ["sushi", "live-station", "premium"],
+            description: "Professional sushi chefs rolling fresh maki and nigiri on-site on massive wooden boats."
+          }
+        ]
+      }
+    }
+  });
+
+  await prisma.supplier.create({
+    data: {
+      name: "Carmel Market Bites",
+      location: "Carmel Market, Tel Aviv",
+      contact: "events@carmelbites.co.il",
+      rating: 4.6,
+      description: "Authentic Tel Aviv street food carts brought to your event.",
+      products: {
+        create: [
+          {
+            name: "Gourmet Shawarma & Falafel Carts",
+            price: 140.00,
+            category: "CATERING",
+            maxCapacity: 600,
+            supportedEvents: ["corporate"],
+            tags: ["street-food", "casual", "meat"],
+            description: "Live carving shawarma stations and fresh falafel fryers for a fun, casual dining experience."
+          }
+        ]
+      }
+    }
+  });
+
+  // ==========================================
+  // 7. DRINKS & BAR SERVICES
+  // ==========================================
+  await prisma.supplier.create({
+    data: {
+      name: "Mixology TLV Bar Services",
+      location: "Tel Aviv",
+      contact: "cheers@mixologytlv.co.il",
+      rating: 4.9,
+      description: "Full-service mobile bars with expert mixologists.",
+      products: {
+        create: [
+          {
+            name: "Standard Open Corporate Bar",
+            price: 150.00,
+            category: "BEVERAGE",
+            maxCapacity: 1000,
+            supportedEvents: ["corporate"],
+            tags: ["alcohol", "open-bar", "standard"],
+            description: "Unlimited standard mixed drinks, local beers, and house wines for the duration of the event."
+          },
+          {
+            name: "Premium Cocktail Experience",
+            price: 250.00,
+            category: "BEVERAGE",
+            maxCapacity: 400,
+            supportedEvents: ["corporate"],
+            tags: ["cocktails", "premium", "mixology"],
+            description: "Expert bartenders crafting signature, smoke-infused cocktails and premium imported liquors."
+          }
+        ]
+      }
+    }
+  });
+
+  await prisma.supplier.create({
+    data: {
+      name: "The Roasting Bean Carts",
+      location: "Givatayim",
+      contact: "coffee@roastingbean.co.il",
+      rating: 4.8,
+      description: "Mobile artisanal coffee and espresso stations.",
+      products: {
+        create: [
+          {
+            name: "Artisanal Espresso & Matcha Cart",
+            price: 65.00,
+            category: "BEVERAGE",
+            maxCapacity: 800,
+            supportedEvents: ["corporate"],
+            tags: ["coffee", "caffeine", "morning"],
+            description: "Trained baristas pulling fresh espresso shots, pouring latte art, and mixing iced matcha."
+          }
+        ]
+      }
+    }
+  });
+
+  // ==========================================
+  // 8. THEMATIC DECORATIONS
+  // ==========================================
+  await prisma.supplier.create({
+    data: {
+      name: "DesignLab Event Decor",
+      location: "Herzliya",
+      contact: "design@designlab.co.il",
+      rating: 4.8,
+      description: "Custom thematic environment design and prop rentals.",
+      products: {
+        create: [
+          {
+            name: "Cyberpunk / Tech Hackathon Decor Setup",
+            price: 12000.00,
+            category: "DECOR",
+            maxCapacity: null,
+            supportedEvents: ["corporate"],
+            tags: ["tech", "neon", "hackathon"],
+            description: "Neon LED strips, futuristic lounge props, and dark industrial accents designed for tech events."
+          },
+          {
+            name: "Elegant Gala Floral Archways & Centerpieces",
+            price: 18000.00,
+            category: "DECOR",
+            maxCapacity: null,
+            supportedEvents: ["corporate"],
+            tags: ["floral", "elegant", "formal"],
+            description: "Massive fresh floral installations, entrance archways, and premium table centerpieces."
+          }
+        ]
+      }
+    }
+  });
+
+  await prisma.supplier.create({
+    data: {
+      name: "BalloonArt Tel Aviv",
+      location: "Tel Aviv-Yafo",
+      contact: "party@balloonart.co.il",
+      rating: 4.6,
+      description: "Premium balloon installations and custom photo backdrops.",
+      products: {
+        create: [
+          {
+            name: "Corporate Branding Balloon Arch & Photo Wall",
+            price: 4500.00,
+            category: "DECOR",
+            maxCapacity: null,
+            supportedEvents: ["corporate"],
+            tags: ["balloons", "branding", "photo-op"],
+            description: "A massive custom balloon installation matching company colors, paired with a branded step-and-repeat photo wall."
+          }
+        ]
+      }
+    }
+  });
+
   console.log("Tel Aviv database successfully seeded with a massive array of options! 🚀");
 }
 
