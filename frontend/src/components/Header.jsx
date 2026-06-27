@@ -10,6 +10,17 @@ function Header() {
             Home
           </span>
         </Link>
+        <nav className="ml-auto flex items-center gap-5 text-sm font-medium">
+          <Link to="/plan" className="text-slate-400 transition-colors hover:text-white">
+            Quick plan
+          </Link>
+          <Link
+            to="/plan-ai"
+            className="rounded-full border border-indigo-500/40 bg-indigo-500/10 px-3 py-1.5 text-indigo-200 transition-colors hover:bg-indigo-500/20 hover:text-white"
+          >
+            Plan with AI
+          </Link>
+        </nav>
       </div>
     </header>
   )
