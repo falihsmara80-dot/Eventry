@@ -4,6 +4,7 @@ import Header from './components/Header'
 import Home from './components/Home'
 import EventForm from './components/EventForm'
 import BundlePreview from './components/BundlePreview'
+import AgentPlanner from './components/AgentPlanner'
 import Success from './components/Success'
 import Cancel from './components/Cancel'
 import { API_BASE_URL } from './lib/api'
@@ -54,6 +55,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/plan" element={<PlanPage />} />
+      <Route path="/plan-ai" element={<AgentPlanner />} />
       <Route path="/success" element={<Success />} />
       <Route path="/cancel" element={<Cancel />} />
     </Routes>
