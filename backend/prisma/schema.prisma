@@ -1,5 +1,4 @@
 // Prisma schema for BundleAI
-// Learn more: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -23,10 +22,12 @@ model User {
 }
 
 model Supplier {
-  id       Int    @id @default(autoincrement())
-  name     String
-  location String
-  contact  String
+  id          Int      @id @default(autoincrement())
+  name        String
+  location    String
+  contact     String
+  rating      Decimal  @default(5.0) @db.Decimal(2, 1)
+  description String?
 
   products Product[]
 
@@ -34,11 +35,15 @@ model Supplier {
 }
 
 model Product {
-  id         Int     @id @default(autoincrement())
-  name       String
-  price      Decimal @db.Decimal(10, 2)
-  category   String
-  supplierId Int     @map("supplier_id")
+  id              Int         @id @default(autoincrement())
+  name            String
+  price           Decimal     @db.Decimal(10, 2)
+  category        String
+  maxCapacity     Int?        @map("max_capacity")
+  supportedEvents String[]    @map("supported_events")
+  tags            String[]
+  description     String?
+  supplierId      Int         @map("supplier_id")
 
   supplier   Supplier    @relation(fields: [supplierId], references: [id])
   orderItems OrderItem[]
@@ -47,11 +52,12 @@ model Product {
 }
 
 model Order {
-  id          Int      @id @default(autoincrement())
-  userId      Int      @map("user_id")
-  totalAmount Decimal  @map("total_amount") @db.Decimal(10, 2)
-  status      String   @default("pending")
-  createdAt   DateTime @default(now()) @map("created_at")
+  id               Int      @id @default(autoincrement())
+  userId           Int      @map("user_id")
+  totalAmount      Decimal  @map("total_amount") @db.Decimal(10, 2)
+  status           String   @default("pending")
+  aiRecommendation String?  @map("ai_recommendation")
+  createdAt        DateTime @default(now()) @map("created_at")
 
   user  User        @relation(fields: [userId], references: [id])
   items OrderItem[]
