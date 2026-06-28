@@ -3,21 +3,19 @@ require('dotenv').config({ quiet: true });
 const express = require('express');
 const cors = require('cors');
 
-const healthRoutes = require('./src/routes/healthRoutes');
-const bundleRoutes = require('./src/routes/bundle');
+const healthRoutes  = require('./src/routes/healthRoutes');
 const checkoutRoutes = require('./src/routes/checkout');
-const agentRoutes = require('./src/routes/agent');
+const agentRoutes    = require('./src/routes/agent');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5005;
 
 app.use(cors());
 app.use(express.json());
 
-app.use('/api', healthRoutes);
-app.use('/api/bundle', bundleRoutes);
+app.use('/api',          healthRoutes);
 app.use('/api/checkout', checkoutRoutes);
-app.use('/api/agent', agentRoutes);
+app.use('/api/agent',    agentRoutes);
 
 const server = app.listen(PORT, () => {
   console.log(`BundleAI backend listening on http://localhost:${PORT}`);

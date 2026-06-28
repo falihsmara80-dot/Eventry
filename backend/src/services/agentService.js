@@ -3,13 +3,15 @@ const OpenAI = require('openai');
 const { CATEGORIES } = require('./bundleEngine');
 const { buildBundles, NotImplementedError } = require('./bundleAlgorithm');
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let _openai = null;
+function getOpenAI() {
+  if (!_openai) _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  return _openai;
+}
 
 // Small model used by the planning agent. Configurable so the algorithm/agent
 // model can be bumped without a code change.
-const AGENT_MODEL = process.env.OPENAI_AGENT_MODEL || 'gpt-5.4-mini-2026-03-17';
+const AGENT_MODEL = process.env.OPENAI_AGENT_MODEL || 'gpt-4o-mini';
 
 // Hard cap on tool-call iterations so a misbehaving model can't loop forever.
 const MAX_TURNS = 4;
@@ -25,20 +27,34 @@ A user describes their event in a free-text paragraph. Your job:
      spell each one out. Scale quantities with the guest count where it makes
      sense (catering, beverages, favors per guest; venue, photography flat).
    - Do NOT invent prices; pricing is handled by the tool.
+   - Budget awareness: if the budget is low relative to the guest count, keep
+     only the most essential categories (Venue and Catering are always core).
+     Omit expensive optional categories like Entertainment, Photography, or
+     Audio & Visual rather than including every possible service.
 
 2. Decide whether you have enough to proceed:
-   - You REQUIRE eventType, guests, and budget. If any of these three cannot be
-     confidently determined from the paragraph, DO NOT call the tool. Instead
-     reply in plain text with a short, friendly message naming exactly what is
-     missing and asking the user to add it.
+   - eventType: Be maximally lenient. ANY word that hints at a gathering or
+     occasion counts — "party", "dinner", "meeting", "launch", "birthday",
+     "wedding", "corporate", "gathering", "get-together", "celebration", etc.
+     If the user's message is even vaguely event-related, extract a reasonable
+     eventType and proceed. If truly nothing is discernible, default to
+     "Custom Event". NEVER refuse to call the tool because of an unclear event
+     type.
+   - guests and budget: These are the only two fields that may cause you to ask
+     for more information. If EITHER is completely absent from the message,
+     reply with a short friendly plain-text question asking only for that
+     missing piece. Do NOT ask about the event type. If both guests and budget
+     are present (or can be estimated), call the tool immediately.
 
 3. If you have all three, call the build_bundles tool exactly once with the
    structured plan.
 
-4. After the tool returns three bundles, write a concise summary (a few
+4. After the tool returns three bundles, write a short, warm summary (2-4
    sentences) contrasting the three tiers — economical, quality, and budget —
-   covering their total price, average rating, and whether each fits the budget.
-   Keep it warm and helpful. Do not restate every line item.`;
+   mentioning their total price and whether each fits the budget. Keep it
+   friendly and concise. Do NOT restate individual line items.
+   IMPORTANT: Write plain prose only. No markdown, no asterisks, no bullet
+   points, no bold or italic formatting of any kind.`;
 
 // JSON-schema description of the algorithm's INPUT shape, exposed to the model
 // as a callable tool.
@@ -105,9 +121,13 @@ async function planEvent(message) {
   ];
 
   let extractedInput;
+  // Tracks whether we've already given the model a second chance to call the
+  // tool. If the model declines twice we accept that it genuinely needs more
+  // info from the user.
+  let hasNudged = false;
 
   for (let turn = 0; turn < MAX_TURNS; turn += 1) {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: AGENT_MODEL,
       messages,
       tools: [BUILD_BUNDLES_TOOL],
@@ -121,13 +141,28 @@ async function planEvent(message) {
 
     const toolCalls = choice.tool_calls ?? [];
 
-    // No tool call → the model decided it needs more info (or is done talking).
+    // No tool call → model either needs more info or is done after a tool ran.
     if (toolCalls.length === 0) {
+      if (!extractedInput && !hasNudged) {
+        // Give the model one more explicit chance before surfacing a validation
+        // error to the user. This catches cases where the model is overly
+        // cautious about a vague event type.
+        hasNudged = true;
+        messages.push(choice);
+        messages.push({
+          role: 'user',
+          content:
+            'Please call the build_bundles tool now using the information available. ' +
+            'If the event type is unclear, use "Custom Event". ' +
+            'Only skip the tool if both guest count and budget are completely absent.',
+        });
+        continue;
+      }
+
       return {
         needsMoreInfo: !extractedInput,
         hint: !extractedInput ? choice.content ?? '' : undefined,
         extractedInput,
-        // If a tool already ran this loop, content here is the final summary.
         summary: extractedInput ? choice.content ?? '' : undefined,
       };
     }
@@ -158,6 +193,12 @@ async function planEvent(message) {
         continue;
       }
 
+      // Code-level fallback: never let an empty/vague event type reach the
+      // builder or block bundle generation.
+      if (!args.eventType || !args.eventType.trim()) {
+        args.eventType = 'Custom Event';
+      }
+
       extractedInput = args;
       const result = await buildBundles(args); // may throw NotImplementedError
       messages.push({
@@ -168,7 +209,7 @@ async function planEvent(message) {
 
       // We have the structured result. Ask the model once more for the summary
       // prose, then return both together.
-      const followUp = await openai.chat.completions.create({
+      const followUp = await getOpenAI().chat.completions.create({
         model: AGENT_MODEL,
         messages,
       });
